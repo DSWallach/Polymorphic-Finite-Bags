@@ -41,7 +41,7 @@ public interface FiniteBag<E extends Comparable<E>> extends Sequence<E> {
      * @return a new FiniteBag with the element added
      */
     public FiniteBag<E> add(E e);
-
+ 
     /**
      * Adds some number (num) of T's to the FiniteBag
      * 
