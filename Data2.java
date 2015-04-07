@@ -262,7 +262,7 @@ class Data2 {
 	}
 	return (passed+" tests passed. " + failed+" tests failed.");
 	}
-    public static void main (String args[]) extends Tester{
+    public static void main (String args[]){
 	//PREMADE TEST SETS
 	FiniteBag<Integer> empty = new Empty<Integer>();
 	FiniteBag<Integer> b0 = new Branch<Integer> (empty, 0, 1, empty);
