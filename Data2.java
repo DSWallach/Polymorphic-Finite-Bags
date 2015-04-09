@@ -31,6 +31,9 @@ class Empty<E extends Comparable<E>> implements FiniteBag<E> {
     public int multiplicity(E e){
 	return 0;
     }
+    public int depth(){
+	return 0;
+    }
     public FiniteBag<E> add(E e){
 	return new Branch<E> (this, e, 1, this);
     }
@@ -51,6 +54,15 @@ class Empty<E extends Comparable<E>> implements FiniteBag<E> {
     }
     public FiniteBag<E> diff(FiniteBag<E> t){
 	return t;
+    }
+    public FiniteBag<E> rotateRight(){
+	return this;
+    }
+    public FiniteBag<E> rotateLeft(){
+	return this;
+    }
+    public FiniteBag<E> checkAVL(){
+	return this;
     }
     public boolean equal(FiniteBag<E> t){
 	return t.isEmptyHuh();
@@ -89,7 +101,7 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
         return "(" +
             this.left + "," +
             this.iden + "," +
-	    this.multi + "," +
+	    // this.multi + "," +
             this.right + ")";
     }
     public int cardinality(){
@@ -111,6 +123,15 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
 	} else {
 	    return this.left.multiplicity(e) + this.right.multiplicity(e);
 	}
+    }
+    public int depth(){
+	int depth = 0;
+	if (this.right.depth() > this.left.depth()) {
+	    depth = 1 + this.right.depth();
+	} else {
+	    depth = 1 + this.left.depth();
+	}
+	return depth;
     }
     public FiniteBag<E> add(E e){
 	if (this.iden.equals(e)){
@@ -149,8 +170,13 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
 	}
     }
     public FiniteBag<E> remove(E e){
-	if (this.iden.equals(e)){
+	if (this.iden.equals(e) && this.multi == 1){
 	    return this.left.union(this.right);
+	} else if (this.iden.equals(e)){
+	    return new Branch (this.left,
+			       this.iden,
+			       this.multi - 1,
+			       this.right);
 	} else if (this.iden.compareTo(e) > 0){
 	    return new Branch<E> (this.left.remove(e),
 				  this.iden,
@@ -164,8 +190,13 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
 	}			       	   
     }
     public FiniteBag<E> remove(E e, int num){
-	if (this.iden.equals(e)){
+	if (this.iden.equals(e) && num > this.multi){
 	    return this.left.union(this.right);
+	} else if (this.iden.equals(e)){
+	    return new Branch (this.left,
+			       this.iden,
+			       this.multi - num,
+			       this.right);
 	} else if (this.iden.compareTo(e) > 0){
 	    return new Branch<E> (this.left.remove(e),
 				  this.iden,
@@ -219,6 +250,29 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
     }
     public Sequence<E> next(){
 	return this;
+    }
+    public FiniteBag<E> rotateRight(){
+	Branch<E> newIden = (Branch<E>)this.left;
+	return new Branch (newIden.left,
+			   newIden.iden,
+			   newIden.multi,
+			   new Branch (newIden.right,
+				       this.iden,
+				       this.multi,
+				       this.right));
+    }
+    public FiniteBag<E> rotateLeft(){
+	Branch<E> newIden = (Branch<E>)this.right;
+	return new Branch (new Branch (this.left,
+				       this.iden,
+				       this.multi,
+				       newIden.left),
+			   newIden.iden,
+			   newIden.multi,
+			   newIden.right);
+    }
+    public FiniteBag<E> checkAVL(){
+        return this;
     }
 }
 class Data2 {
@@ -286,33 +340,36 @@ class Data2 {
        int failed = 0;
        int check = 0;
        for (int i=0;i<numTest;i++){
-	   FiniteBag<Integer> IntBag = randomIntBag(i, rangeTest);
-	   FiniteBag<Integer> newIntBag = IntBag;
-	   FiniteBag<String> StringBag = randomStringBag(i);
-	   FiniteBag<String> newStringBag = StringBag;
+	   FiniteBag IntBag = randomIntBag(i, rangeTest);
+	   FiniteBag newIntBag = IntBag;
+	   FiniteBag StringBag = randomStringBag(i);
+	   FiniteBag newStringBag = StringBag;
+	   FiniteBag BoolBag = randomBoolBag(i, rangeTest);
+	   FiniteBag newBoolBag = BoolBag;
 	   Random newRandom = new Random();
 	   int num = newRandom.nextInt(rangeTest);
 	   if (num < (rangeTest / 3)){
-		newStringBag = StringBag.add("Hello");
-		check = 1;
-	   } else /*(num < (2 * (rangeTest / 3)))*/{
-		newIntBag = IntBag.add(num);
-		check = 2;
-	    }/* else {
-		newBag = Bag.add(num);
-		check = 3;
-	    }*/
-	    if (check == 1 && newStringBag.member("Hello")){
-		passed++;
-	    } else if (check == 2 && newIntBag.member(num)){
-		passed++;
-	    } /*else if (check == 3 && newBag.member(true)){
-		passed++;
-		}*/ else {
-		failed++;
-	    }
-	}
-	return (passed+" tests passed. " + failed+" tests failed.");
+	       newStringBag = StringBag.add("Hello");
+	       check = 1;
+	   } else if (num < (2 * (rangeTest / 3))){
+	       newIntBag = IntBag.add(num);
+	       check = 2;
+	   } else {
+	       newBoolBag = BoolBag.add(true);
+	       check = 3;
+	       }
+	   if (check == 1 && newStringBag.member("Hello")){
+	       passed++;
+	   } else if (check == 2 && newIntBag.member(num)){
+	       passed++;
+	   } else if (check == 3 && newBoolBag.member(true) &&
+		      newBoolBag.multiplicity(true) == BoolBag.multiplicity(true) + 1){
+	       passed++;
+	   } else {
+	       failed++;
+	   }
+       }
+       return (passed+" tests passed. " + failed+" tests failed.");
    }
     public static String addXTest(int numTest, int rangeTest){
 	int passed = 0;
@@ -366,17 +423,36 @@ class Data2 {
         int passed = 0;
 	int failed = 0;
 	for (int i=0;i<numTest;i++){
+	    FiniteBag IntBag = randomIntBag(i, rangeTest);
+	    FiniteBag newIntBag = IntBag;
+	    FiniteBag StringBag = randomStringBag(i);
+	    FiniteBag newStringBag = StringBag;
+	    FiniteBag BoolBag = randomBoolBag(i, rangeTest);
+	    FiniteBag newBoolBag = BoolBag;
 	    Random newRandomY = new Random();
 	    Random newRandomX = new Random();
 	    int y = newRandomY.nextInt(rangeTest);
 	    int x = newRandomX.nextInt(rangeTest);
-	    FiniteBag<Integer> newSet = randomIntBag(i, rangeTest);
+	    String yString = "y";
+	    String xString = "x";
+	    boolean yBool = true;
+	    boolean xBool = false;
 	    if (x < (rangeTest/2)){
 		y = x;
+		/*	if (x < (rangeTest / 3)){
+		    newStringBag = StringBag.add("Hello");
+		    check = 1;
+		} else if (x < (2 * (rangeTest / 3))){
+		    y = x;
+		    check = 2;
+		} else {
+		    newBoolBag = BoolBag.add(true);
+		    check = 3;
+		}*/
 	    } else {
-		newSet = newSet.add(y);
+		IntBag = IntBag.add(y);
 	    }
-	    if (newSet.add(x).member(y)){
+	    if (IntBag.add(x).member(y)){
 		passed++;
 	    } else {
 		failed++;
@@ -390,8 +466,8 @@ class Data2 {
 	for (int i=0;i<numTest;i++){
 	    Random newRandom = new Random();
 	    int x = newRandom.nextInt(rangeTest);
-	    FiniteBag<Integer> setA = randomIntBag((i/2), rangeTest);
-	    FiniteBag<Integer> setB = randomIntBag((i/2), rangeTest);
+	    FiniteBag setA = randomIntBag((i/2), rangeTest);
+	    FiniteBag setB = randomIntBag((i/2), rangeTest);
 	    if (x < (rangeTest/2)){
 		setA = setA.add(x);
 	    } else {
@@ -419,19 +495,35 @@ class Data2 {
 	FiniteBag b2b = new Branch (b0, 2, 1, b3);
 	FiniteBag b4 = new Branch (b2, 4, 1, b6);
 	FiniteBag b4b = new Branch (b2b, 4, 1, b7);
+	FiniteBag unBal0 = new Branch (empty, 0, 1, empty);
+	FiniteBag unBal1 = new Branch (unBal0, 1, 1, empty);
+	FiniteBag unBal2 = new Branch (unBal1, 2, 1, empty);
+	FiniteBag unBal3 = new Branch (unBal2, 3, 1, empty);
+	FiniteBag unBal4 = new Branch (unBal3, 4, 1, empty);
+	FiniteBag unBalLeft = new Branch (unBal4, 5, 1, empty);
+	FiniteBag unBal8 = new Branch (empty, 8, 1, empty);
+	FiniteBag unBal7 = new Branch (empty, 7, 1, unBal8);
+	FiniteBag unBal6 = new Branch (empty, 6, 1, unBal7);
+	FiniteBag unBal = new Branch (unBal4, 5, 1, unBal6);
 	FiniteBag string1 = new Branch (empty, "Hello", 1, empty);
 	FiniteBag string2 = new Branch (empty,"World", 1, empty);
 	FiniteBag string3 = new Branch (string1, "Hello", 5,empty);
 	FiniteBag string = new Branch (string3, "Hello World", 1, string2);
 	
-	
 	//TESTS
-	System.out.println (string.multiplicity("Hello") +" "+ string);
+	System.out.println("" + unBal4.depth());
+	System.out.println("" + unBal6.depth());
+	System.out.println("" + unBal.depth());
+	System.out.println("" + unBal3);
+	System.out.println("" + unBal3.rotateRight());
+	System.out.println("" + unBal6);
+	System.out.println("" + unBal6.rotateLeft());
+	//System.out.println("" + unBalLeft.rotateRight().rotateRight());
 	System.out.println ("RANDOMLY GENERATED TESTS");
-	System.out.println (memberTest(25, 1000));
-	System.out.println (unionTest(25, 1000));
-	System.out.println (addTest(25, 1000));
-	System.out.println (addXTest(25, 1000));
+	//System.out.println (memberTest(25, 1000));
+	//System.out.println (unionTest(25, 1000));
+	//System.out.println (addTest(25, 1000));
+	//System.out.println (addXTest(25, 1000));
 	System.out.println ();
 	System.out.println ("PREMADE TESTS");
 	System.out.println ("Should be true. Is "+string.member("Hello"));

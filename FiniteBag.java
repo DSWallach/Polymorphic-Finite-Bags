@@ -10,6 +10,13 @@ public interface FiniteBag<E extends Comparable<E>> extends Sequence<E> {
     public int cardinality();
 
     /**
+     * Returns an integer value representing the greatest depth of the FiniteBag
+     *
+     * @return an integer equal to the greatest depth of the FiniteBag
+     */
+    public int depth();
+
+    /**
      * Returns a Boolean value true if the set is empty and false otherwise.
      *
      * @return   a Boolean value stating whether the set is empty
@@ -99,6 +106,30 @@ public interface FiniteBag<E extends Comparable<E>> extends Sequence<E> {
      */
     public FiniteBag<E> diff(FiniteBag<E> t);
 
+    /**
+     * Rotates the FiniteBag to the right. So what was in the left position 
+     * on the branch is now in the head and the head is in the right position 
+     * on the branch along with everything that was in the right position previously.
+     *
+     * @return a new FiniteBag with the same elements as the old one but rotated to the right
+     */
+    public FiniteBag<E> rotateRight();
+    /** 
+     * Performs the same function as rotateRight except it rotates the tree
+     * to the left
+     *
+     * @return a new FiniteBag with the same elements as the old one but rotated to the left
+     */
+    public FiniteBag<E> rotateLeft();
+    /**
+     * Travels up the tree making sure that at any root the difference 
+     * between the length of its left and right branches is never 
+     * greater than 1. If it is checkAVL performs rotateRight() or
+     * rotateLeft() on the tree depending on which branch is longer.
+     *
+     * @return a balanced AVL tree with the same elements as the original
+     */
+    public FiniteBag<E> checkAVL();
     /**
      * Returns a boolean based on whether or not two FiniteBags are equal. 
      * i.e. are the multiplicities of each object in the FiniteBags equal.
