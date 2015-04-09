@@ -1,5 +1,5 @@
 import java.util.*;
-class Data2 {
+class testData2 {
     public static void printTree(FiniteBag e, int level){
 	Branch root;
 	if(e.isEmptyHuh()){
@@ -84,42 +84,142 @@ class Data2 {
 	}
 	return rFiniteBag;
     }
-   public static String addTest(int numTest, int rangeTest){
-       int passed = 0;
-       int failed = 0;
-       int check = 0;
-       for (int i=0;i<numTest;i++){
-	   FiniteBag IntBag = randomIntBag(i, rangeTest);
-	   FiniteBag newIntBag = IntBag;
-	   FiniteBag StringBag = randomStringBag(i);
-	   FiniteBag newStringBag = StringBag;
-	   FiniteBag BoolBag = randomBoolBag(i, rangeTest);
-	   FiniteBag newBoolBag = BoolBag;
-	   Random newRandom = new Random();
-	   int num = newRandom.nextInt(rangeTest);
-	   if (num < (rangeTest / 3)){
-	       newStringBag = StringBag.add("Hello");
-	       check = 1;
-	   } else if (num < (2 * (rangeTest / 3))){
-	       newIntBag = IntBag.add(num);
-	       check = 2;
-	   } else {
-	       newBoolBag = BoolBag.add(true);
-	       check = 3;
-	       }
-	   if (check == 1 && newStringBag.member("Hello")){
-	       passed++;
-	   } else if (check == 2 && newIntBag.member(num)){
-	       passed++;
-	   } else if (check == 3 && newBoolBag.member(true) &&
-		      newBoolBag.multiplicity(true) == BoolBag.multiplicity(true) + 1){
-	       passed++;
-	   } else {
-	       failed++;
-	   }
-       }
-       return (passed+" tests passed. " + failed+" tests failed.");
-   }
+    public static String cardinalityTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	FiniteBag IntBag = new Empty();
+	for (int i=0;i<numTest;i++){
+	    IntBag = IntBag.add(i);
+	    if (IntBag.cardinality() == i+1){
+		passed++;
+	    } else {
+		failed++;
+		System.out.println (IntBag + "");
+		System.out.println (IntBag.cardinality() + ", " + i);
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
+    public static String emptyTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	boolean empty;
+	FiniteBag IntBag = new Empty();
+	for (int i=0;i<numTest;i++){
+	    Random newRandom = new Random();
+	    int num = newRandom.nextInt(rangeTest);
+	    if (num < (rangeTest / 2)){
+		empty = true;
+		IntBag = new Empty();
+	    } else {
+		empty = false;
+		IntBag = IntBag.add(i);
+	    }
+	    if (empty && IntBag.isEmptyHuh()){
+		passed++;
+	    } else if (!empty && !IntBag.isEmptyHuh()){
+		passed++;
+	    } else {
+		failed++;
+		printTree(IntBag, 0);
+		System.out.println(""+empty);
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
+     public static String memberTest(int numTest, int rangeTest){
+        int passed = 0;
+	int failed = 0;
+	for (int i=0;i<numTest;i++){
+	    FiniteBag IntBag = randomIntBag(i, rangeTest);
+	    FiniteBag newIntBag = IntBag;
+	    Random newRandomY = new Random();
+	    Random newRandomX = new Random();
+	    int y = newRandomY.nextInt(rangeTest);
+	    int x = newRandomX.nextInt(rangeTest);
+	    String yString = "y";
+	    String xString = "x";
+	    boolean yBool = true;
+	    boolean xBool = false;
+	    if (x < (rangeTest/2)){
+		y = x;
+	    } else {
+		IntBag = IntBag.add(y);
+	    }
+	    if (IntBag.add(x).member(y)){
+		passed++;
+	    } else {
+		failed++;
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+     }
+    public static String multiplicityTest(int numTest, int rangeTest){	
+	int passed = 0;
+	int failed = 0;
+	for (int i=0;i<numTest;i++){
+	    FiniteBag StringBag = randomStringBag(i);
+	    FiniteBag newStringBag = StringBag.add("e", i);
+	    if (newStringBag.multiplicity("e") - StringBag.multiplicity("e") == i){
+		passed++;
+	    } else {
+		failed++;
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
+    /*public static String depthTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	FiniteBag emptyBag = new Empty();
+	FiniteBag IntBag = new Branch(emptyBag, 0, 1, emptyBag);
+	for (int i=1;i<numTest+1;i++){
+	    IntBag = new Branch (IntBag.left,
+				 IntBag.iden,
+				 IntBag.multi,
+				 
+	    if (IntBag.isEmptyHuh() && IntBag.depth() == 0){
+		passed++;
+	    } 
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+	}*/
+    public static String addTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	int type = 0;
+	for (int i=0;i<numTest;i++){
+	    FiniteBag IntBag = randomIntBag(i, rangeTest);
+	    FiniteBag newIntBag = IntBag;
+	    FiniteBag StringBag = randomStringBag(i);
+	    FiniteBag newStringBag = StringBag;
+	    FiniteBag BoolBag = randomBoolBag(i, rangeTest);
+	    FiniteBag newBoolBag = BoolBag;
+	    Random newRandom = new Random();
+	    int num = newRandom.nextInt(rangeTest);
+	    if (num < (rangeTest / 3)){
+		newStringBag = StringBag.add("Hello");
+		type = 1;
+	    } else if (num < (2 * (rangeTest / 3))){
+		newIntBag = IntBag.add(num);
+		type = 2;
+	    } else {
+		newBoolBag = BoolBag.add(true);
+		type = 3;
+	    }
+	    if (type == 1 && newStringBag.member("Hello")){
+		passed++;
+	    } else if (type == 2 && newIntBag.member(num)){
+		passed++;
+	    } else if (type == 3 && newBoolBag.member(true) &&
+		       newBoolBag.multiplicity(true) == BoolBag.multiplicity(true) + 1){
+		passed++;
+	    } else {
+		failed++;
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
     public static String addXTest(int numTest, int rangeTest){
 	int passed = 0;
 	int failed = 0;
@@ -255,7 +355,7 @@ class Data2 {
 	    } else {
 		newBoolBag = BoolBag.remove(true, num);
 		type = 3;
-		}
+	    }
 	    if (type == 1 &&
 	        newStringBag.multiplicity("c") - StringBag.multiplicity("c") <= num){
 		passed++;
@@ -289,47 +389,6 @@ class Data2 {
 	}
 	return (passed+" tests passed. " + failed+" tests failed.");
     }
-    public static String memberTest(int numTest, int rangeTest){
-        int passed = 0;
-	int failed = 0;
-	for (int i=0;i<numTest;i++){
-	    FiniteBag IntBag = randomIntBag(i, rangeTest);
-	    FiniteBag newIntBag = IntBag;
-	    FiniteBag StringBag = randomStringBag(i);
-	    FiniteBag newStringBag = StringBag;
-	    FiniteBag BoolBag = randomBoolBag(i, rangeTest);
-	    FiniteBag newBoolBag = BoolBag;
-	    Random newRandomY = new Random();
-	    Random newRandomX = new Random();
-	    int y = newRandomY.nextInt(rangeTest);
-	    int x = newRandomX.nextInt(rangeTest);
-	    String yString = "y";
-	    String xString = "x";
-	    boolean yBool = true;
-	    boolean xBool = false;
-	    if (x < (rangeTest/2)){
-		y = x;
-		/*	if (x < (rangeTest / 3)){
-		    newStringBag = StringBag.add("Hello");
-		    check = 1;
-		} else if (x < (2 * (rangeTest / 3))){
-		    y = x;
-		    check = 2;
-		} else {
-		    newBoolBag = BoolBag.add(true);
-		    check = 3;
-		}*/
-	    } else {
-		IntBag = IntBag.add(y);
-	    }
-	    if (IntBag.add(x).member(y)){
-		passed++;
-	    } else {
-		failed++;
-	    }
-	}
-	return (passed+" tests passed. " + failed+" tests failed.");
-    }
     public static String unionTest(int numTest, int rangeTest){
         int passed = 0;
 	int failed = 0;
@@ -350,19 +409,63 @@ class Data2 {
 	    }
 	}
 	return (passed+" tests passed. " + failed+" tests failed.");
-    } 
+    }
+    public static String interTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	for (int i=0;i<numTest;i++){
+	    FiniteBag IntBag1 = randomIntBag(i, rangeTest);
+	    FiniteBag IntBag2 = IntBag1.add(i);
+	    if (IntBag1.inter(IntBag2).equal(IntBag1)){
+		passed++;
+	    } else {
+		failed++;
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
+    public static String diffTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	for (int i=0;i<numTest;i++){
+	    FiniteBag IntBag1 = randomIntBag(i, rangeTest);
+	    FiniteBag IntBag2 = IntBag1.add(i);
+	    if (IntBag2.diff(IntBag1).equal(new Branch (new Empty(),
+							i,
+							1,
+							new Empty()))){
+		passed++;
+	    } else {
+		failed++;
+		printTree(IntBag1, 0);
+		System.out.println("========================================================");
+		printTree(IntBag2, 0);
+		System.out.println("========================================================");
+		printTree(IntBag1.diff(IntBag2), 0);
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
     public static void main (String args[]){
 	FiniteBag rand = randomStringBag(100);
-	FiniteBag worst = worstCaseBag(100, 1000);
+	FiniteBag worst = worstCaseBag(10, 1000);
+	FiniteBag worst2 = worstCaseBag(9, 1000);
+
 	//RANDOM TESTS
-	printTree(worst, 0);
-	printTree(rand, 0);
+	// System.out.println (worst.here()+"");
+	// System.out.println (worst.next().here()+"");
+	// System.out.println (worst.max()+"");
 	System.out.println ("RANDOMLY GENERATED TESTS");
-	System.out.println (memberTest(25, 1000));
-	System.out.println (unionTest(25, 1000));
-	System.out.println (addTest(25, 1000));
-	System.out.println (addXTest(25, 1000));
-	System.out.println (removeTest(25, 1000));
-	System.out.println (removeXTest(25, 1000));
+	System.out.println (diffTest(25, 1000)+" FiniteBag.diff(FiniteBag<E>)");
+	System.out.println (interTest(25, 1000)+" FiniteBag.inter(FiniteBag<E>)");
+	System.out.println (multiplicityTest(25, 1000)+" FiniteBag.multiplicity(E e)");
+	System.out.println (emptyTest(25, 1000)+" FiniteBag.isEmptyHuh()");
+	System.out.println (memberTest(25, 1000)+" FiniteBag.member(E e)");
+	System.out.println (unionTest(25, 1000)+" FiniteBag.union(FiniteBag<E>)");
+	System.out.println (addTest(25, 1000)+" FiniteBag.add(E e)");
+	System.out.println (addXTest(25, 1000)+" FiniteBag.add(E e, int num)");
+	System.out.println (removeTest(25, 1000)+" FiniteBag.remove(E e)");
+	System.out.println (removeXTest(25, 1000)+" FiniteBag.remove(E e, int num)");
+	System.out.println (cardinalityTest(25, 1000)+" FiniteBag.cardinality()");
     }
 }

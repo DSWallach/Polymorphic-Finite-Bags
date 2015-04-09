@@ -96,13 +96,13 @@ public interface FiniteBag<E extends Comparable<E>> extends Sequence<E> {
     public FiniteBag<E> inter(FiniteBag<E> t);
 
     /**
-     * Returns the difference of two FiniteBags, the returned FiniteBag will
-     * have only objects that were in only one of the original FiniteBags not
-     * objects that were in both or neither. The multiplicities of the objects
-     * are equal to what they were in their original FiniteBags
+     * Returns all of the object in the orignal FiniteBag, except for those that are
+     * also contained within FinitBag t. If the multiplicity of the object in the 
+     * original FiniteBag is greater than the multiplicity of the object in 
+     * FinteBag t then the new multiplicity is the difference of the multiplicities.
      *
      * @param t  the FiniteBag to subtract from this FiniteBag
-     * @return   a new FiniteBag with the desired objects from each input FiniteBag
+     * @return   a new FiniteBag without the objects that are in t
      */
     public FiniteBag<E> diff(FiniteBag<E> t);
 
@@ -111,7 +111,7 @@ public interface FiniteBag<E extends Comparable<E>> extends Sequence<E> {
      * on the branch is now in the head and the head is in the right position 
      * on the branch along with everything that was in the right position previously.
      *
-     * @return a new FiniteBag with the same elements as the old one but rotated to the right
+     * @return a new FiniteBag with the same objects as the old one but rotated to the right
      */
     public FiniteBag<E> rotateRight();
     /** 
