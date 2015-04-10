@@ -1,142 +1,12 @@
+package data2;
+
+/**
+ *
+ * @author David Wallach
+ */
 import java.math.*;
-interface Sequenced<E extends Comparable<E>>{
-    public Sequence<E> seq();
-}
-interface Sequence<E extends Comparable<E>> extends Sequenced<E>{
-    public E here();
-    public boolean isEmptyHuh();
-    public Sequence<E> next();
-}
-class makeSeq<E extends Comparable<E>> implements Sequence<E>{
-    Sequence<E> left;
-    Sequence<E> right;
-
-    makeSeq(Sequence<E> left, Sequence<E> right){
-	this.left = left;
-	this.right = right;
-    }
-    public E here(){
-	if (!this.left.isEmptyHuh()){
-	    return this.left.here();
-	} else {
-	    return this.right.here();
-	}
-    }
-    public boolean isEmptyHuh(){
-	return this.left.isEmptyHuh() && this.right.isEmptyHuh();
-    }
-    public Sequence<E> next(){
-	if (!this.left.isEmptyHuh()){
-	    return new makeSeq<E>(this.left.next(), this.right);
-	} else {
-	    return this.right.next();
-	}
-    }
-    public Sequence<E> seq(){
-	return this;
-    }
-
-}
-class BagSeq<E extends Comparable<E>> implements Sequence<E> {
-    makeSeq<E> s;
-    E iden;
-    int multi;
-
-    BagSeq (makeSeq<E> s, E iden, int multi) {
-	this.s = s;
-	this.iden = iden;
-	this.multi = multi;
-    }
-    public E here() {
-        return this.iden;
-    }
-    public boolean isEmptyHuh() {
-        return false;
-    }
-    public Sequence next() {
-	if (this.multi > 1){
-	    return new BagSeq(this.s, this.iden, this.multi - 1);
-	} else {
-	    return this.s;
-	}
-    }
-    public Sequence seq(){
-	return this;
-    }
-}
-// - an empty bag: empty
-class Empty<E extends Comparable<E>> implements FiniteBag<E> {
-    Empty (){}
-    public String toString(){
-	return ("e");
-    }
-    public int cardinality(){
-	return 0;
-    }
-    public boolean isEmptyHuh(){
-	return true;
-    }
-    public boolean member(E e){
-	return false;
-    }
-    public int multiplicity(E e){
-	return 0;
-    }
-    public int depth(){
-	return 0;
-    }
-    public FiniteBag<E> add(E e){
-	return new Branch<E> (this, e, 1, this);
-    }
-    public FiniteBag<E> add(E e, int num){
-        return new Branch<E> (this, e, num, this);
-    }
-    public FiniteBag<E> remove(E e){
-	return this;
-    }
-    public FiniteBag<E> remove(E e, int num){
-	return this;
-    }
-    public FiniteBag<E> union(FiniteBag<E> t){
-	return t;
-    }
-    public FiniteBag<E> inter(FiniteBag<E> t){
-	return new Empty();
-    }
-    public FiniteBag<E> diff(FiniteBag<E> t){
-	return new Empty();
-    }
-    public FiniteBag<E> rotateRight(){
-	return this;
-    }
-    public FiniteBag<E> rotateLeft(){
-	return this;
-    }
-    public FiniteBag<E> checkAVL(){
-	return this;
-    }
-    public boolean equal(FiniteBag<E> t){
-	return t.isEmptyHuh();
-    }
-    public boolean subset(FiniteBag<E> t){
-	return true;
-    }
-    public E max(){
-	throw new RuntimeException();
-    }
-    public Sequence<E> seq(){
-	return this;
-    }
-    public E here(){
-	throw new RuntimeException("Nothing is here.");
-    }
-    public Sequence<E> next(){
-	return this;
-    }
-}
-
 // - a Branch: (FiniteBag, E, multi, FiniteBag)
-class Branch<E extends Comparable<E>> implements FiniteBag<E> {
+public class Branch<E extends Comparable<E>> implements FiniteBag<E> {
     E iden;
     int multi;
     FiniteBag<E> left;
@@ -354,5 +224,3 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
 }
 
 
-
-			    
