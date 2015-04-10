@@ -276,24 +276,29 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
     }
     public FiniteBag<E> diff(FiniteBag<E> t){
 	if (t.member(this.iden)){
-	    return this.remove(this.iden,
-			       t.multiplicity(this.iden)).diff(t).remove(this.iden,
-									 t.multiplicity(this.iden));
+	    if (t.multiplicity(this.iden) < this.multi){
+		return new Branch (this.left.diff(t),
+				   this.iden,
+				   this.multi-t.multiplicity(this.iden),
+				   this.right.diff(t));
+	    } else {
+		return this.left.diff(t).union(this.right.diff(t));
+	    }
 	} else {
-	    return new Branch<E> (this.left.diff(t),
-				  this.iden,
-				  this.multi,
-				  this.right.diff(t));
+	    return new Branch (this.left.diff(t),
+			       this.iden,
+			       this.multi,
+			       this.right.diff(t));
 	}
     }
     public boolean equal(FiniteBag<E> t){
 	return t.subset(this) && this.subset(t);
     }
     public boolean subset(FiniteBag<E> t){
-	if(!t.member(this.iden)){
+	if (this.diff(t).isEmptyHuh()){
+	    return true;
+	} else {
 	    return false;
-        } else {
-	    return this.remove(this.iden).subset(t);
 	}
     }
     public E max(){
@@ -304,7 +309,10 @@ class Branch<E extends Comparable<E>> implements FiniteBag<E> {
 	}
     }
     public Sequence<E> seq(){
-	return new BagSeq<E>(new makeSeq<E>(this.left.seq(), this.right.seq()), this.iden, this.multi);
+	return new BagSeq<E>(new makeSeq<E>(this.left.seq(),
+					    this.right.seq()),
+			     this.iden,
+			     this.multi);
     }
     public E here(){
 	return this.seq().here();

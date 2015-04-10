@@ -14,11 +14,11 @@ class testData2 {
 	    }
             System.out.println("|----"+root.iden+"("+root.multi+")");
 	} else {
-	    System.out.println(root.iden);
+	    System.out.println(root.iden+"("+root.multi+")");
 	}
 	printTree(root.left, level+1);
     }
-    public static FiniteBag worstCaseBag(int numAdd, int rangeAdd){
+    public static FiniteBag worstCaseBag(int numAdd){
 	FiniteBag rFiniteBag = new Empty();
 	for (int i=0; i<numAdd;i++){
 	    rFiniteBag = rFiniteBag.add(i);
@@ -84,6 +84,32 @@ class testData2 {
 	}
 	return rFiniteBag;
     }
+    /* public static FiniteBag unBalIntAdd(FiniteBag t, int e){
+	if (t.isEmptyHuh()){
+	    return new Branch (new Empty(),
+			       e,
+			       1,
+			       new Empty());
+	} else {
+	    Branch bT = (Branch<Integer>)t;
+	    if (bT.iden.equals(e)){
+		return new Branch (bT.left,
+				   bT.iden,
+				   bT.multi + 1,
+				   bT.right);
+	    } else if (bT.iden.compareTo(e) > 0){
+		return new Branch (unBalIntAdd(bT.left, e),
+				   bT.iden,
+				   bT.multi,
+				   bT.right);
+	    } else {
+		return new Branch (bT.left,
+				   bT.iden,
+				   bT.multi,
+				   unBalIntAdd(bT.right, e));
+	    }
+	}
+    }*/
     public static String cardinalityTest(int numTest, int rangeTest){
 	int passed = 0;
 	int failed = 0;
@@ -127,7 +153,7 @@ class testData2 {
 	}
 	return (passed+" tests passed. " + failed+" tests failed.");
     }
-     public static String memberTest(int numTest, int rangeTest){
+    public static String memberTest(int numTest, int rangeTest){
         int passed = 0;
 	int failed = 0;
 	for (int i=0;i<numTest;i++){
@@ -153,7 +179,7 @@ class testData2 {
 	    }
 	}
 	return (passed+" tests passed. " + failed+" tests failed.");
-     }
+    }
     public static String multiplicityTest(int numTest, int rangeTest){	
 	int passed = 0;
 	int failed = 0;
@@ -169,21 +195,21 @@ class testData2 {
 	return (passed+" tests passed. " + failed+" tests failed.");
     }
     /*public static String depthTest(int numTest, int rangeTest){
-	int passed = 0;
-	int failed = 0;
-	FiniteBag emptyBag = new Empty();
-	FiniteBag IntBag = new Branch(emptyBag, 0, 1, emptyBag);
-	for (int i=1;i<numTest+1;i++){
-	    IntBag = new Branch (IntBag.left,
-				 IntBag.iden,
-				 IntBag.multi,
+      int passed = 0;
+      int failed = 0;
+      FiniteBag emptyBag = new Empty();
+      FiniteBag IntBag = new Branch(emptyBag, 0, 1, emptyBag);
+      for (int i=1;i<numTest+1;i++){
+      IntBag = new Branch (IntBag.left,
+      IntBag.iden,
+      IntBag.multi,
 				 
-	    if (IntBag.isEmptyHuh() && IntBag.depth() == 0){
-		passed++;
-	    } 
-	}
-	return (passed+" tests passed. " + failed+" tests failed.");
-	}*/
+      if (IntBag.isEmptyHuh() && IntBag.depth() == 0){
+      passed++;
+      } 
+      }
+      return (passed+" tests passed. " + failed+" tests failed.");
+      }*/
     public static String addTest(int numTest, int rangeTest){
 	int passed = 0;
 	int failed = 0;
@@ -438,34 +464,96 @@ class testData2 {
 	    } else {
 		failed++;
 		printTree(IntBag1, 0);
-		System.out.println("========================================================");
+		System.out.println("=============");
 		printTree(IntBag2, 0);
-		System.out.println("========================================================");
-		printTree(IntBag1.diff(IntBag2), 0);
+		System.out.println("================"+IntBag1.diff(IntBag2));
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
+    public static String equalTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	for (int i=0;i<numTest;i++){
+	    FiniteBag IntBag1 = worstCaseBag(i);
+	    FiniteBag IntBag2 = worstCaseBag(i);
+	    if (IntBag1.equal(IntBag2)){
+		passed++;
+	    } else {
+		failed++;
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
+    public static String subsetTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	int type = 0;
+	for (int i=0;i<numTest;i++){
+	    FiniteBag IntBag = randomIntBag(i, rangeTest);
+	    FiniteBag newIntBag;
+	    Random newRandom = new Random();
+	    int num = newRandom.nextInt(rangeTest);
+	    if (num < (rangeTest / 3)){
+		type = 1;
+		newIntBag = IntBag.add(num, num);
+	    } else if (num < 2* (rangeTest / 3)){
+		type = 2;
+		newIntBag = IntBag;
+	    } else {
+		type = 2;
+		newIntBag = IntBag.remove(i, i);
+	    }
+	    if (type == 1 && !newIntBag.subset(IntBag)){
+		passed++;
+	    } else if (type == 2 && newIntBag.subset(IntBag)){
+		passed++;
+	    } else {
+		failed++;
+		printTree(IntBag, 0);
+		System.out.println ("=================================================="+type);
+		printTree(newIntBag, 0);
+		System.out.println ("=================================================="+newIntBag.diff(IntBag));		
+	    }
+	}
+	return (passed+" tests passed. " + failed+" tests failed.");
+    }
+    public static String maxTest(int numTest, int rangeTest){
+	int passed = 0;
+	int failed = 0;
+	FiniteBag IntBag = new Empty();
+	for (int i=0;i<numTest;i++){
+	    IntBag = IntBag.add(i);
+	    if (IntBag.max().compareTo(i) == 0){
+		passed++;
+	    } else {
+		failed++;
+		printTree(IntBag, 0);
+		System.out.println ("========================"+i+", "+IntBag.max());
 	    }
 	}
 	return (passed+" tests passed. " + failed+" tests failed.");
     }
     public static void main (String args[]){
-	FiniteBag rand = randomStringBag(100);
-	FiniteBag worst = worstCaseBag(10, 1000);
-	FiniteBag worst2 = worstCaseBag(9, 1000);
+	// FiniteBag rand = randomStringBag(100);
+	// FiniteBag worst = worstCaseBag(10, 1000);
+	// FiniteBag worst2 = worstCaseBag(9, 1000);
 
 	//RANDOM TESTS
-	// System.out.println (worst.here()+"");
-	// System.out.println (worst.next().here()+"");
-	// System.out.println (worst.max()+"");
 	System.out.println ("RANDOMLY GENERATED TESTS");
-	System.out.println (diffTest(25, 1000)+" FiniteBag.diff(FiniteBag<E>)");
-	System.out.println (interTest(25, 1000)+" FiniteBag.inter(FiniteBag<E>)");
-	System.out.println (multiplicityTest(25, 1000)+" FiniteBag.multiplicity(E e)");
-	System.out.println (emptyTest(25, 1000)+" FiniteBag.isEmptyHuh()");
-	System.out.println (memberTest(25, 1000)+" FiniteBag.member(E e)");
-	System.out.println (unionTest(25, 1000)+" FiniteBag.union(FiniteBag<E>)");
-	System.out.println (addTest(25, 1000)+" FiniteBag.add(E e)");
-	System.out.println (addXTest(25, 1000)+" FiniteBag.add(E e, int num)");
-	System.out.println (removeTest(25, 1000)+" FiniteBag.remove(E e)");
-	System.out.println (removeXTest(25, 1000)+" FiniteBag.remove(E e, int num)");
-	System.out.println (cardinalityTest(25, 1000)+" FiniteBag.cardinality()");
+	System.out.println (maxTest(50, 1000)+" FiniteBag.max()");	
+	System.out.println (subsetTest(50, 1000)+" FiniteBag.subset(FiniteBag<E>)");
+	System.out.println (equalTest(50, 1000)+" FiniteBag.equal(FiniteBag<E>)");
+	System.out.println (diffTest(50, 1000)+" FiniteBag.diff(FiniteBag<E>)");
+	System.out.println (interTest(50, 1000)+" FiniteBag.inter(FiniteBag<E>)");
+	System.out.println (multiplicityTest(50, 1000)+" FiniteBag.multiplicity(E e)");
+	System.out.println (emptyTest(50, 1000)+" FiniteBag.isEmptyHuh()");
+	System.out.println (memberTest(50, 1000)+" FiniteBag.member(E e)");
+	System.out.println (unionTest(50, 1000)+" FiniteBag.union(FiniteBag<E>)");
+	System.out.println (addTest(50, 1000)+" FiniteBag.add(E e)");
+	System.out.println (addXTest(50, 1000)+" FiniteBag.add(E e, int num)");
+	System.out.println (removeTest(50, 1000)+" FiniteBag.remove(E e)");
+	System.out.println (removeXTest(50, 1000)+" FiniteBag.remove(E e, int num)");
+	System.out.println (cardinalityTest(50, 1000)+" FiniteBag.cardinality()");
     }
 }

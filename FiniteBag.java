@@ -141,9 +141,9 @@ public interface FiniteBag<E extends Comparable<E>> extends Sequence<E> {
 
     /**
      * Returns a boolean based on whether or not this FiniteBag is a subset 
-     * of the input FiniteBag. It returns true when each object in this FiniteBag 
-     * has multiplicities less than or equal to the multiplicities of the objects 
-     * in the input.
+     * of FiniteBag t. It returns true when each object in this FiniteBag 
+     * has multiplicities less than or equal to the multiplicities of the 
+     * same objects in t.
      *
      * @param t  the FiniteBag to compare to this FiniteBag
      * @return   the Boolean value true if this FiniteBag is a subset, and false otherwise
