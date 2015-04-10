@@ -25,9 +25,11 @@ public class makeSeq<E extends Comparable<E>> implements Sequence<E>{
     public Sequence<E> next(){
 	if (!this.left.isEmptyHuh()){
 	    return new makeSeq<E>(this.left.next(), this.right);
-	} else {
+	} else if (!this.right.isEmptyHuh()){
 	    return this.right.next();
-	}
+	} else {
+            return new EmptySeq();
+        }
     }
     public Sequence<E> seq(){
 	return this;

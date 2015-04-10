@@ -20,14 +20,14 @@ public class BagSeq<E extends Comparable<E>> implements Sequence<E> {
     public boolean isEmptyHuh() {
         return false;
     }
-    public Sequence next() {
+    public Sequence<E> next() {
 	if (this.multi > 1){
 	    return new BagSeq(this.s, this.iden, this.multi - 1);
 	} else {
 	    return this.s;
 	}
     }
-    public Sequence seq(){
+    public Sequence<E> seq(){
 	return this;
     }
 }

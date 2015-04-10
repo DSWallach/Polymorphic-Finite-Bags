@@ -1,6 +1,6 @@
 package data2;
 
-/**
+/** 
  *
  * @author David Wallach
  */
@@ -25,7 +25,7 @@ public class Branch<E extends Comparable<E>> implements FiniteBag<E> {
             this.right + ")";
     }
     public int cardinality(){
-	return 1 + this.left.cardinality() + this.right.cardinality();
+	return this.multi + this.left.cardinality() + this.right.cardinality();
     }
     public boolean isEmptyHuh(){
 	return false;
@@ -54,22 +54,7 @@ public class Branch<E extends Comparable<E>> implements FiniteBag<E> {
 	return depth;
     }
     public FiniteBag<E> add(E e){
-	if (this.iden.equals(e)){
-	    return new Branch<E> (this.left,
-				  this.iden,
-				  this.multi + 1,
-				  this.right).checkAVL();
-	} else if (this.iden.compareTo(e) > 0){
-	    return new Branch<E> (this.left.add(e),
-				  this.iden,
-				  this.multi,
-				  this.right).checkAVL();
-	} else{
-	    return new Branch<E> (this.left,
-				  this.iden,
-				  this.multi,
-				  this.right.add(e)).checkAVL();
-	}
+        return this.add(e,1);
     }
     public FiniteBag<E> add(E e, int num){
 	if (this.iden.equals(e)){
@@ -90,59 +75,40 @@ public class Branch<E extends Comparable<E>> implements FiniteBag<E> {
 	}
     }
     public FiniteBag<E> remove(E e){
-	if (this.iden.equals(e) && this.multi == 1){
-	    return this.left.union(this.right);
-	} else if (this.iden.equals(e)){
-	    return new Branch (this.left,
-			       this.iden,
-			       this.multi - 1,
-			       this.right);
-	} else if (this.iden.compareTo(e) > 0){
-	    return new Branch<E> (this.left.remove(e),
-				  this.iden,
-				  this.multi,
-				  this.right);
-	} else {
-	    return new Branch<E> (this.left,
-				  this.iden,
-				  this.multi,
-				  this.right.remove(e));
-	}			       	   
+        return this.remove(e, 1);
     }
-    public FiniteBag<E> remove(E e, int num){
-	if (this.iden.equals(e) && num > this.multi){
-	    return this.left.union(this.right);
-	} else if (this.iden.equals(e)){
-	    return new Branch (this.left,
-			       this.iden,
-			       this.multi - num,
-			       this.right);
-	} else if (this.iden.compareTo(e) > 0){
-	    return new Branch<E> (this.left.remove(e),
-				  this.iden,
-				  this.multi,
-				  this.right);
-	} else {
-	    return new Branch<E> (this.left,
-				  this.iden,
-				  this.multi,
-				  this.right.remove(e));
-	}			       	   
+    public FiniteBag<E> remove(E e, int num) {
+        if (this.iden.equals(e) && num > this.multi) {
+            return this.left.union(this.right).checkAVL();
+        } else if (this.iden.equals(e)) {
+            return new Branch(this.left,
+                    this.iden,
+                    this.multi - num,
+                    this.right).checkAVL();
+        } else if (this.iden.compareTo(e) > 0) {
+            return new Branch<E>(this.left.remove(e),
+                    this.iden,
+                    this.multi,
+                    this.right).checkAVL();
+        } else {
+            return new Branch<E>(this.left,
+                    this.iden,
+                    this.multi,
+                    this.right.remove(e)).checkAVL();
+        }
     }
-    public FiniteBag<E> union(FiniteBag<E> t){
-	FiniteBag<E> newBag = t.union(this.left).union(this.right).add(this.iden);
-	return newBag;
+    public FiniteBag<E> union(FiniteBag<E> t) {
+        return t.union(this.left).union(this.right).add(this.iden, this.multi);
     }
-    public FiniteBag<E> inter(FiniteBag<E> t){
-	if (!t.member(this.iden)){
-	    FiniteBag newBag = this.left.union(this.right);
-	    return newBag.inter(t);
-	} else {
-	    return new Branch<E> (this.left.inter(t),
-				  this.iden,
-				  Math.min(this.multi, t.multiplicity(this.iden)),
-				  this.right.inter(t));
-	}
+    public FiniteBag<E> inter(FiniteBag<E> t) {
+        if (!t.member(this.iden)) {
+            return this.left.union(this.right).inter(t);
+        } else {
+            return new Branch(this.left.inter(t),
+                    this.iden,
+                    Math.min(this.multi, t.multiplicity(this.iden)),
+                    this.right.inter(t));
+        }
     }
     public FiniteBag<E> diff(FiniteBag<E> t){
 	if (t.member(this.iden)){

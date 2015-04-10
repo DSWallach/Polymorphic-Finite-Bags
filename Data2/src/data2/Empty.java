@@ -62,15 +62,15 @@ public class Empty<E extends Comparable<E>> implements FiniteBag<E> {
 	return true;
     }
     public E max(){
-	throw new RuntimeException();
+	return null;
     }
     public Sequence<E> seq(){
-	return this;
+	return new EmptySeq();
     }
     public E here(){
-	throw new RuntimeException("Nothing is here.");
+	return this.seq().here();
     }
     public Sequence<E> next(){
-	return this;
+	return this.seq().next();
     }
 }
